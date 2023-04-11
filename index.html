@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Search</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link type="text/css" rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h3>Spotify Search</h3>
+        <div class="topnav">
+            <div class="search-container">
+                <form method="post">
+                    <input type="text" placeholder="Search.." name="search">
+                    <select class="form-dropdown" name="type">
+                        <option class="form-dropdown" value="song">Song</option>
+                        <option class="form-dropdown" value="artist">Artist</option>
+                        <option class="form-dropdown" value="album">Album</option>
+                    </select>
+                    <button type="submit"><i class="fa fa-search"></i></button>
+                    <div class="saved-container">
+                        <a class="saved-button" id="saved" href="savedsongs.php">Saved Songs</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="sidebar">
+                <form method="post">
+                    <section class="filter-group">
+                        <header class="section-header">
+                            Sort By
+                        </header>
+                        <div class="filter-content">
+                            <select class="form-dropdown" name="sort">
+                                <option class="form-dropdown" value="most">Most Popular</option>
+                                <option class="form-dropdown" value="least">Least Popular</option>
+                                <option class="form-dropdown" value="A">A-Z</option>
+                                <option class="form-dropdown" value="Z">Z-A</option>
+                            </select>
+                        </div>
+                    </section>
+                    <section class="filter-group">
+                        <header class="section-header">
+                            Genre
+                        </header>
+                        <div class="filter-content">
+                            <select class="form-dropdown" name="genre">
+                                <option class="form-dropdown">-None-</option>
+                            </select>
+                        </div>
+                    </section>
+                    <section class="filter-group">
+                        <header class="filter-header">
+                            Explicit
+                        </header>
+                        <div class="filter-content">
+                            <label>
+                                <input class="form-radio" type="radio" name="explicit" value="TRUE">
+                                True
+                            </label>
+                            <label>
+                                <input class="form-radio" type="radio" name="explicit" value="FALSE">
+                                False
+                            </label>
+                        </div>
+                    </section>
+                    <section class="filter-group">
+                        <header class="section-header">
+                            Duration
+                        </header>
+                        <div class="filter-content">
+                            <select class="form-dropdown" name="duration">
+                                <option class="form-dropdown" value="0">-None-</option>
+                                <option class="form-dropdown" value="0-1">0-1 mins</option>
+                                <option class="form-dropdown" value="1-2">1-2 mins</option>
+                                <option class="form-dropdown" value="2-3">2-3 mins</option>
+                                <option class="form-dropdown" value="3-4">3-4 mins</option>
+                                <option class="form-dropdown" value="4+">4 mins+</option>
+                            </select>
+                        </div>
+                    </section>
+                    <div class="filter-button-div">
+                        <button class="filter-button" type="reset">Clear</button>
+                        <button class="filter-button" type="submit" name="filter">Apply</button>
+                    </div>
+                </form>
+            </div>
+            <div class="return-container">
+                <table class="return-table">
+                    <thead>
+                        <tr>
+                            <th>Save</th>
+                            <th>Song Name</th>
+                            <th>By</th>
+                            <th>Album</th>
+                            <th>Genre</th>
+                            <th>Explicit</th>
+                            <th>Duration</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
