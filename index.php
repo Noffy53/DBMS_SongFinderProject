@@ -15,8 +15,8 @@
         <h3>Spotify Search</h3>
         <div class="topnav">
             <div class="search-container">
-                <form method="post">
-                    <input type="text" placeholder="Search.." name="search">
+                <form method="post" action="index.php?mode=search">
+                    <input type="text" placeholder="Search.." name="input">
                     <select class="form-dropdown" name="type">
                         <option class="form-dropdown" value="song">Song</option>
                         <option class="form-dropdown" value="artist">Artist</option>
@@ -31,7 +31,7 @@
         </div>
         <div class="row">
             <div class="sidebar">
-                <form method="post">
+                <form method="post" action="index.php?mode=filter">
                     <section class="filter-group">
                         <header class="section-header">
                             Sort By
@@ -190,7 +190,7 @@
                         </header>
                         <div class="filter-content">
                             <select class="form-dropdown" name="duration">
-                                <option class="form-dropdown" value="0">-None-</option>
+                                <option class="form-dropdown" value="any">Any</option>
                                 <option class="form-dropdown" value="0-1">0-1 mins</option>
                                 <option class="form-dropdown" value="1-2">1-2 mins</option>
                                 <option class="form-dropdown" value="2-3">2-3 mins</option>

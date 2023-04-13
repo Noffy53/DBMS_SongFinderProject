@@ -9,69 +9,63 @@ if (!$db) {
     exit();
 }
 
-$search="";
-$type="";
+$mode = "";                                                 // default value for the switch statement
+$parameterValues = null;                                    // default values named parameters
 
-try {
 
-    if(isset($_POST['search'])){                        //checking if they searched button was pressed
-
-        $search = $_POST['search'];                     //retrieving sesarch input
-        $type = $_POST['type'];                         //retrieving type of search
-
-        switch($type) {
-        
-            case 'song' :                                   //checking if the type of search is for a song
-
-                $sql = "";                                  //query for song search
-                $statement = $db->prepare($sql);            //preparing query
-
-                $statement->bindValue(':search', $search);
-                //$statement->bindValue(':type', $type);
-
-                $statement->closeCursor();
-                $db = null;
-            break;
-
-            case 'artist' :                            //checking if the type of search is for a artist
-
-                $sql = "";                                  //query for artist search
-                $statement = $db->prepare($sql);            //preparing query
-
-                $statement->bindValue(':search', $search);
-                //$statement->bindValue(':type', $type);
-
-                $statement->closeCursor();
-                $db = null;
-            break;
-
-            case 'album' :                             //checking if the type of search is for a album
-
-                $sql = "";                                  //query for album search
-                $statement = $db->prepare($sql);            //preparing query
-
-                $statement->bindValue(':search', $search);
-                //$statement->bindValue(':type', $type);
-
-                $statement->closeCursor();
-                $db = null;
-            break;
-        }
-    }
+try {     
     
+    if(isset($_GET['mode'])){                                //checking if they searched button was pressed
 
-    //ckecking if filter button was clicked
-    $sort=""; 
-    $genre = "";
-    $explicit = "";
-    $duration = "";
-    if(isset($_POST['filter'])){
-        $sort = $_POST['sort'];                     //gathering form data from filter 
-        $genre = $_POST['genre'];
-        $explicit = $_POST['explicit'];
-        $duration = $_POST['duration'];
+        $mode = $_GET(['mode']);
+    }
 
-        $sql = "SELECT";
+    //$search = $_POST['search'];                           //retrieving sesarch input
+    //$type = $_POST['type'];                               //retrieving type of search
+
+    switch($mode) {
+    
+        case 'search' :                                       //checking if case is search type
+
+            $type = $_POST(['type']);
+            $input = $_POST(['input']);
+
+            $sql = "";                                      //query for song search
+            $statement = $db->prepare($sql);                //preparing query
+
+            $parameterValues = array(":type" => $type,
+                                    ":input" => $input);
+            //$statement->bindValue(':type', $type);
+
+            $statement->closeCursor();
+            //$db = null;
+        break;
+
+        case 'filter' :                                     //checking if the type of search is for a artist
+
+            $sort = $_POST(['sort']);
+            $genre = $_POST(['genre']);
+            $explicit = $_POST(['explicit']);
+            $duration = $_POST(['duration']);
+
+            //need to do if genre is 0, explicit isn't selected, and duration is any
+            //will need to change parameterValues and sql variable
+
+            $sql = "";                                      //query for artist search
+            $statement = $db->prepare($sql);                //preparing query
+
+            $parameterValues = array(":sort" => $sort,
+                                    ":genre" => $genre
+                                    ":explicit" => $explicit,
+                                    ":duration" => $duration);
+
+            $statement->closeCursor();
+            //$db = null;
+        break;
+
+        default :
+
+        break;
     }
 
 } catch (PDOException $e) {
@@ -79,18 +73,21 @@ try {
     die();
 }
 
+function getAll($sql, $db, $parameterValues = null){
+    /* Prepare the SQL statement. 
+        The $db->prepare($sql) method returns an object.
+    */
+    $statement = $db->prepare($sql);
 
-//checking if the used filter and if they did what do they want filtered
-if(isset($_POST['filter'])){
-    $sort = $_POST['sort'];
-    $genre = $_POST['genre'];
-    $explicit = $_POST['explicit'];
-    $duration = $_POST['duration'];
+    /* Execute prepared statement. The execute( ) method returns a resource object.  */
+    $statement->execute($parameterValues );
+
+    /* Use the fetchAll( ) method to extract records from the result set.
+    */
+    $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+    return $result;
 }
 
-
-
-
-
-
+?>
 ?>
