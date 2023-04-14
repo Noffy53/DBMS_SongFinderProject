@@ -38,7 +38,7 @@ try {
                 $sql = "";
             }
 
-                                                  //query for song search
+                                                  
             $parameterValues = array(":type" => $type,
                                     ":input" => $input);
 

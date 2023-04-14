@@ -216,9 +216,12 @@
                             <th>Genre</th>
                             <th>Explicit</th>
                             <th>Duration</th>
-                            <?php include('function.php'); ?>
+                            
                         </tr>
                     </thead>
+                    <tbody>
+                        <?php include('function.php'); ?>
+                    </tbody>
                 </table>
             </div>
         </div>
