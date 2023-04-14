@@ -44,10 +44,10 @@ try {
 
             $returnList = getAll($sql, $db, $parameterValues);
 
-            foreach($returnList as $row){
+            /*foreach($returnList as $row){
                 echo "<tr><td>Filler</td><td>{$row['track_name']}</td><td>{$row['artist_name']}</td><td>{$row['album_name']}</td>
                     <td>{$row['genre']}</td><td>{$row['explicit']}</td><td>{$row['duration_ms']}</td></tr>";
-            }
+            }*/
             
         break;
 

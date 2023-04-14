@@ -209,18 +209,19 @@
                 <table class="return-table">
                     <thead>
                         <tr>
-                            <th>Save</th>
-                            <th>Song Name</th>
-                            <th>By</th>
-                            <th>Album</th>
-                            <th>Genre</th>
-                            <th>Explicit</th>
-                            <th>Duration</th>
-                            
+                            <th>Save</th><th>Song Name</th><th>By</th><th>Album</th><th>Genre</th><th>Explicit</th><th>Duration</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php include('function.php'); ?>
+                        <?php include('function.php'); 
+                        
+                        foreach($returnList as $row){
+                            echo "<tr><td>Filler</td><td>{$row['track_name']}</td><td>{$row['artist_name']}</td><td>{$row['album_name']}</td>
+                                <td>{$row['genre']}</td><td>{$row['explicit']}</td><td>{$row['duration_ms']}</td></tr>";
+                        }
+                        ?>
+
+                        
                     </tbody>
                 </table>
             </div>
