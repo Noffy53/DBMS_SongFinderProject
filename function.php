@@ -30,15 +30,25 @@ try {
             $type = $_POST(['type']);
             $input = $_POST(['input']);
 
-            $sql = "";                                      //query for song search
-            $statement = $db->prepare($sql);                //preparing query
+            if($type == 'song'){
+                $sql = "";
+            } else if($type =='artist'){
+                $sql = "";
+            } else {
+                $sql = "";
+            }
 
+                                                  //query for song search
             $parameterValues = array(":type" => $type,
                                     ":input" => $input);
-            //$statement->bindValue(':type', $type);
 
-            $statement->closeCursor();
-            //$db = null;
+            $returnList = getAll($sql, $db, $parameterValues);
+
+            foreach($returnList as $row){
+                echo "<tr><td>Filler</td><td>{$row['track_name']}</td><td>{$row['artist_name']}</td><td>{$row['album_name']}</td>
+                    <td>{$row['genre']}</td><td>{$row['explicit']}</td><td>{$row['duration_ms']}</td></tr>";
+            }
+            
         break;
 
         case 'filter' :                                     //checking if the type of search is for a artist
@@ -52,14 +62,16 @@ try {
             //will need to change parameterValues and sql variable
 
             $sql = "";                                      //query for artist search
-            $statement = $db->prepare($sql);                //preparing query
-
             $parameterValues = array(":sort" => $sort,
                                     ":genre" => $genre
                                     ":explicit" => $explicit,
                                     ":duration" => $duration);
+            
+            $returnList = getAll($sql, $db, $parameterValues);
+            
+            foreach($returnList as $row){
 
-            $statement->closeCursor();
+            }
             //$db = null;
         break;
 

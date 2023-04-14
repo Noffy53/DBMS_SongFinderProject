@@ -216,6 +216,7 @@
                             <th>Genre</th>
                             <th>Explicit</th>
                             <th>Duration</th>
+                            <?php include('function.php'); ?>
                         </tr>
                     </thead>
                 </table>
