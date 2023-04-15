@@ -31,7 +31,13 @@ try {
             $input = $_POST(['input']);
 
             if($type == 'song'){
-                $sql = "";
+                $sql = "SELECT DISTINCT Tracks.track_name, Artist.artist_name, Album.album_name, Appears_on.track_genre, Tracks.duration_ms 
+                FROM Tracks 
+                JOIN Appears_on ON Tracks.track_id = Appears_on.track_id 
+                JOIN Album ON Appears_on.album_id = Album.album_id 
+                JOIN Produce ON Tracks.track_id = Produce.track_id 
+                JOIN Artist ON Produce.artist_id = Artist.artist_id 
+                WHERE Tracks.track_name = $input;";
             } else if($type =='artist'){
                 $sql = "";
             } else {
@@ -101,5 +107,4 @@ function getAll($sql, $db, $parameterValues = null){
     return $result;
 }
 
-?>
 ?>
