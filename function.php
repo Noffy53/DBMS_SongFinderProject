@@ -16,44 +16,36 @@ $parameterValues = null;                                    // default values na
 try {     
     
     if(isset($_GET['mode'])){                                //checking if they searched button was pressed
-
-        $mode = $_GET(['mode']);
+        $mode = $_GET['mode'];
     }
-
-    //$search = $_POST['search'];                           //retrieving sesarch input
-    //$type = $_POST['type'];                               //retrieving type of search
 
     switch($mode) {
     
         case 'search' :                                       //checking if case is search type
 
-            $type = $_POST(['type']);
-            $input = $_POST(['input']);
+            $type = $_POST['type'];
+            $input = $_POST['input'];
 
             if($type == 'song'){
-                $sql = "SELECT DISTINCT Tracks.track_name, Artist.artist_name, Album.album_name, Appears_on.track_genre, Tracks.duration_ms 
-                FROM Tracks 
-                JOIN Appears_on ON Tracks.track_id = Appears_on.track_id 
-                JOIN Album ON Appears_on.album_id = Album.album_id 
-                JOIN Produce ON Tracks.track_id = Produce.track_id 
-                JOIN Artist ON Produce.artist_id = Artist.artist_id 
-                WHERE Tracks.track_name = $input;";
+                $sql = "";
             } else if($type =='artist'){
                 $sql = "";
             } else {
-                $sql = "";
+                $sql = "SELECT Tracks.track_name
+                FROM `Tracks`
+                INNER JOIN `Appears_on` ON Tracks.track_id = Appears_on.track_id
+                INNER JOIN `Album` ON Appears_on.album_id = Album.album_id
+                WHERE Album.album_name = :input";
             }
 
-                                                  
-            $parameterValues = array(":type" => $type,
-                                    ":input" => $input);
+                                                    
+            $parameterValues = array(":input" => $input);
 
             $returnList = getAll($sql, $db, $parameterValues);
 
-            /*foreach($returnList as $row){
-                echo "<tr><td>Filler</td><td>{$row['track_name']}</td><td>{$row['artist_name']}</td><td>{$row['album_name']}</td>
-                    <td>{$row['genre']}</td><td>{$row['explicit']}</td><td>{$row['duration_ms']}</td></tr>";
-            }*/
+            foreach($returnList as $row){
+                echo "<tr><td>{$row['track_name']}</td></tr>";
+            }
             
         break;
 
@@ -69,7 +61,7 @@ try {
 
             $sql = "";                                      //query for artist search
             $parameterValues = array(":sort" => $sort,
-                                    ":genre" => $genre
+                                    ":genre" => $genre,
                                     ":explicit" => $explicit,
                                     ":duration" => $duration);
             
@@ -91,17 +83,15 @@ try {
     die();
 }
 
+
 function getAll($sql, $db, $parameterValues = null){
-    /* Prepare the SQL statement. 
-        The $db->prepare($sql) method returns an object.
-    */
+    /* Prepare the SQL statement. The $db->prepare($sql) method returns an object.*/
     $statement = $db->prepare($sql);
 
     /* Execute prepared statement. The execute( ) method returns a resource object.  */
     $statement->execute($parameterValues );
 
-    /* Use the fetchAll( ) method to extract records from the result set.
-    */
+    /* Use the fetchAll( ) method to extract records from the result set.*/
     $result = $statement->fetchAll(PDO::FETCH_ASSOC);
 
     return $result;
