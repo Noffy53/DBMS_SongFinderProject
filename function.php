@@ -27,9 +27,23 @@ try {
             $input = $_POST['input'];
 
             if($type == 'song'){
-                $sql = "";
+                $sql = "SELECT DISTINCT Tracks.track_id, Tracks.track_name, Artist.artist_name, 
+                    Album.album_name, Tracks.explicit, Tracks.track_genre, Tracks.duration_ms
+            	FROM Tracks
+            	JOIN Appears_on ON Tracks.track_id = Appears_on.track_id
+            	JOIN Album ON Appears_on.album_id = Album.album_id
+           	    JOIN Produce ON Tracks.track_id = Produce.track_id
+            	JOIN Artist ON Produce.artist_id = Artist.artist_id
+            	WHERE Tracks.track_name = :input";
             } else if($type =='artist'){
-                $sql = "";
+                $sql = "SELECT Distinct Tracks.track_id, Tracks.track_name, Artist.artist_name, 
+                    Album.album_name, Tracks.track_genre, Tracks.explicit, Tracks.duration_ms 
+                FROM Tracks 
+                JOIN Appears_on ON Tracks.track_id = Appears_on.track_id 
+                JOIN Album ON Appears_on.album_id = Album.album_id 
+                JOIN Produce ON Tracks.track_id = Produce.track_id 
+                JOIN Artist ON Produce.artist_id = Artist.artist_id 
+                WHERE Artist.artist_name = :input";
             } else {
                 $sql = "SELECT Tracks.track_name
                 FROM `Tracks`
@@ -43,27 +57,35 @@ try {
 
             $returnList = getAll($sql, $db, $parameterValues);
 
-            foreach($returnList as $row){
-                echo "<tr><td>{$row['track_name']}</td></tr>";
+            if(sizeof($returnList) > 0) {
+                foreach($returnList as $row){
+                    echo "<tr><td>{$row['track_id']}</td><td>{$row['track_name']}</td><td>{$row['artist_name']}</td><td>{$row['album_name']}</td>
+                    <td>{$row['track_genre']}</td><td>{$row['explicit']}</td><td>{$row['duration_ms']}</td></tr>";
+                }
+            } else {
+                echo "<script> alert('There is no {$type} with the name {$input}!'); </script>";
             }
-            
         break;
 
         case 'filter' :                                     //checking if the type of search is for a artist
 
-            $sort = $_POST(['sort']);
-            $genre = $_POST(['genre']);
-            $explicit = $_POST(['explicit']);
-            $duration = $_POST(['duration']);
+            $sort = $_POST['sort'];                         //retrieve sort value
+            $genre = $_POST['genre'];                       //retrieve genre value
+            $duration = $_POST['duration'];                 //retrieve duration value
 
-            //need to do if genre is 0, explicit isn't selected, and duration is any
-            //will need to change parameterValues and sql variable
+            if($genre != '0'){                              //if specific genre isn't selected 
 
-            $sql = "";                                      //query for artist search
-            $parameterValues = array(":sort" => $sort,
-                                    ":genre" => $genre,
-                                    ":explicit" => $explicit,
-                                    ":duration" => $duration);
+            }
+
+            if(isset($_POST['explicit'])){                  //if explicit radio button is selected then retrieve value
+                $explicit = $_POST['explicit'];
+            }
+
+            if($duration != 'any') {                        //if specific duration value is selected and not default/any
+
+            } 
+            
+            $parameterValues = array();
             
             $returnList = getAll($sql, $db, $parameterValues);
             
