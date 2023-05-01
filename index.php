@@ -15,13 +15,16 @@
         <h3>Spotify Search</h3>
         <div class="topnav">
             <div class="search-container">
-                <form method="post" action="index.php?mode=search">
+                <form method="post" action="index.php?mode=search" id="searchForm">
                     <input type="text" placeholder="Search.." name="input">
-                    <select class="form-dropdown" name="type">
+                    <select class="form-dropdown" name="type" id="type">
                         <option class="form-dropdown" value="song">Song</option>
                         <option class="form-dropdown" value="artist">Artist</option>
                         <option class="form-dropdown" value="album">Album</option>
                     </select>
+                    <script type="text/javascript">
+                        document.getElementById('type').value = "<?php echo $_POST['type'];?>";
+                    </script>
                     <button type="submit"><i class="fa fa-search"></i></button>
                     <div class="saved-container">
                         <a class="saved-button" id="saved" href="savedsongs.php">Saved Songs</a>
@@ -51,7 +54,7 @@
                         </header>
                         <div class="filter-content">
                             <select class="form-dropdown" name="genre">
-                                <option class="form-dropdown" value="0">-None-</option>
+                                <option class="form-dropdown" value="none">None</option>
                                 <option class="form-dropdown" value="acoustic">acoustic</option>
                                 <option class="form-dropdown" value="afrobeat">afrobeat</option>
                                 <option class="form-dropdown" value="alt-rock">alt-rock</option>
