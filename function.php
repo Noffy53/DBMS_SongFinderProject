@@ -26,32 +26,21 @@ try {
             $type = $_POST['type'];
             $input = $_POST['input'];
 
-            if($type == 'song'){
-                $sql = "SELECT DISTINCT Tracks.track_id, Tracks.track_name, Artist.artist_name, 
-                    Album.album_name, Tracks.explicit, Tracks.track_genre, Tracks.duration_ms
-            	FROM Tracks
-            	JOIN Appears_on ON Tracks.track_id = Appears_on.track_id
-            	JOIN Album ON Appears_on.album_id = Album.album_id
-           	    JOIN Produce ON Tracks.track_id = Produce.track_id
-            	JOIN Artist ON Produce.artist_id = Artist.artist_id
-            	WHERE Tracks.track_name = :input";
-            } else if($type =='artist'){
-                $sql = "SELECT Distinct Tracks.track_id, Tracks.track_name, Artist.artist_name, 
-                    Album.album_name, Tracks.track_genre, Tracks.explicit, Tracks.duration_ms 
-                FROM Tracks 
-                JOIN Appears_on ON Tracks.track_id = Appears_on.track_id 
-                JOIN Album ON Appears_on.album_id = Album.album_id 
-                JOIN Produce ON Tracks.track_id = Produce.track_id 
-                JOIN Artist ON Produce.artist_id = Artist.artist_id 
-                WHERE Artist.artist_name = :input";
-            } else {
-                $sql = "SELECT Tracks.track_name
-                FROM `Tracks`
-                INNER JOIN `Appears_on` ON Tracks.track_id = Appears_on.track_id
-                INNER JOIN `Album` ON Appears_on.album_id = Album.album_id
-                WHERE Album.album_name = :input";
-            }
+            $sql = "SELECT DISTINCT tracks.track_id, tracks.track_name, artist.artist_name, albums.album_name, tracks.explicit, tracks.track_genre, tracks.duration_ms 
+            FROM tracks 
+            JOIN appears_on ON tracks.track_id = appears_on.track_id 
+            JOIN albums ON appears_on.album_id = albums.album_id 
+            JOIN produce ON tracks.track_id = produce.track_id 
+            JOIN artist ON produce.artist_id = artist.artist_id 
+            WHERE ";
 
+            if($type == 'song'){                                //if the type of the search is song query where input is song name
+                $sql .= "tracks.track_name = :input";
+            } else if($type == 'artist'){                       //if the type of the search is artist query where input is artist name
+                $sql .= "artist.artist_name = :input";
+            } else {                                            //if the type of the search isn't song or artist, search album with input as album name
+                $sql .= "albums.album_name = :input";
+            }
                                                     
             $parameterValues = array(":input" => $input);
 
@@ -59,44 +48,114 @@ try {
 
             if(sizeof($returnList) > 0) {
                 foreach($returnList as $row){
+                    $durationms = gmdate("i:s", ($row['duration_ms']/1000));
+
                     echo "<tr><td>{$row['track_id']}</td><td>{$row['track_name']}</td><td>{$row['artist_name']}</td><td>{$row['album_name']}</td>
-                    <td>{$row['track_genre']}</td><td>{$row['explicit']}</td><td>{$row['duration_ms']}</td></tr>";
+                    <td>{$row['track_genre']}</td><td>{$row['explicit']}</td><td>{$durationms}</td></tr>";
                 }
             } else {
                 echo "<script> alert('There is no {$type} with the name {$input}!'); </script>";
             }
-        break;
+            break;
 
         case 'filter' :                                     //checking if the type of search is for a artist
-
+            $explicit = null;                               //creating defualt explicit variable since radio button is optional
             $sort = $_POST['sort'];                         //retrieve sort value
             $genre = $_POST['genre'];                       //retrieve genre value
             $duration = $_POST['duration'];                 //retrieve duration value
-
-            if($genre != '0'){                              //if specific genre isn't selected 
-
-            }
-
             if(isset($_POST['explicit'])){                  //if explicit radio button is selected then retrieve value
                 $explicit = $_POST['explicit'];
             }
 
-            if($duration != 'any') {                        //if specific duration value is selected and not default/any
+            $sql = "SELECT DISTINCT tracks.track_id, tracks.track_name, artist.artist_name, albums.album_name, tracks.explicit, tracks.track_genre, tracks.duration_ms 
+            FROM tracks
+            JOIN appears_on ON tracks.track_id = appears_on.track_id
+            JOIN albums ON appears_on.album_id = albums.album_id
+            JOIN produce ON tracks.track_id = produce.track_id
+            JOIN artist ON produce.artist_id = artist.artist_id
+            WHERE ";
 
-            } 
+            // Add genre condition if selected
+            if ($genre != 'none') {
+                $sql .= "(tracks.track_genre LIKE '%{$genre}%') ";
+            }
+
+            // Add explicit condition if selected
+            if (!is_null($explicit)) {
+                if ($genre != 'none') {
+                    $sql .= "AND ";
+                }
+                $sql .= "(tracks.explicit = '{$explicit}') ";
+            }
+
+            // Add duration condition if selected
+            switch ($duration) {
+                case '0-1':
+                    $sql .= "AND (tracks.duration_ms <= 60000) ";
+                    break;
+                case '1-2':
+                    $sql .= "AND (tracks.duration_ms >= 60000 AND tracks.duration_ms <= 120000) ";
+                    break;
+                case '2-3':
+                    $sql .= "AND (tracks.duration_ms >= 120000 AND tracks.duration_ms <= 180000) ";
+                    break;
+                case '3-4':
+                    $sql .= "AND (tracks.duration_ms >= 180000 AND tracks.duration_ms <= 240000) ";
+                    break;
+                case '4+':
+                    $sql .= "AND (tracks.duration_ms >= 240000) ";
+                    break;
+            }
+            
+            if ($sort == 'least') {
+                $sql .= "ORDER BY tracks.popularity DESC";
+            } else if ($sort == 'A') {
+                $sql .= "ORDER BY tracks.track_name";
+            } else if ($sort == 'Z') {
+                $sql .= "ORDER BY tracks.track_name DESC";
+            } else {
+                $sql .= "ORDER BY tracks.popularity";
+            }
             
             $parameterValues = array();
             
             $returnList = getAll($sql, $db, $parameterValues);
             
-            foreach($returnList as $row){
+            if(sizeof($returnList) > 0) {
+                foreach($returnList as $row){
+                    $durationms = gmdate("i:s", ($row['duration_ms']/1000));
 
+                    echo "<tr><td>FILLER</td><td>{$row['track_name']}</td><td>{$row['artist_name']}</td><td>{$row['album_name']}</td>
+                    <td>{$row['track_genre']}</td><td>{$row['explicit']}</td><td>{$durationms}</td></tr>";
+                }
+            } else {
+                echo "<script> alert('There songs matching your filter!'); </script>";
             }
-            //$db = null;
-        break;
+
+            break;
 
         default :
+        $sql = "SELECT DISTINCT TOP (100) tracks.track_id, tracks.track_name, artist.artist_name, album.album_name, tracks.explicit, tracks.track_genre, tracks.duration_ms
+        FROM tracks
+        JOIN appears_on ON tracks.track_id = appears_on.track_id
+        JOIN album ON appears_on.album_id = album.album_id
+        JOIN produce ON tracks.track_id = produce.track_id
+        JOIN artist ON produce.artist_id = artist.artist_id
+        ORDER BY tracks.popularity";
 
+        $parameterValues = array();
+        $returnList = getAll($sql, $db, $parameterValues);
+
+        if(sizeof($returnList) > 0) {
+            foreach($returnList as $row){
+                //$durationms = gmdate("i:s", ($row['duration_ms']/1000));
+
+                echo "<tr><td>{$row['track_id']}</td><td>{$row['track_name']}</td><td>{$row['artist_name']}</td><td>{$row['album_name']}</td>
+                    <td>{$row['track_genre']}</td><td>{$row['explicit']}</td><td>{$durationms}</td></tr>";
+            }
+        } else {
+            echo "<script> alert('There songs matching your filter!'); </script>";
+        }
         break;
     }
 
